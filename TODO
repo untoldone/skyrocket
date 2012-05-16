@@ -1,0 +1,78 @@
+Points of view:
+- generating static content as a developer
+- generating static content for production
+- authoring static erb files, coffee, less
+
+Command line functionality:
+  skyrocket compile
+  Generates static content and exits with default settings
+
+  skyrocket watch
+  Blocks until ctrl+c -- watches input directories for changes and recompiles when it does
+
+  skyrocket compile -m concat
+  compiles conactinated only
+
+  skyrocket compile -m mini
+  compiles concatinated and minified
+
+  skyrocket compile -b /blog
+  compiles with a different base url
+
+Code use cases
+
+  # access assets
+  am = Skyrocket::AssetManager.new('./different/asset/dir', :lib => ['./another/lib/asset'], :base_url => '/blog', :style => :minified)
+  am['application.js']
+
+  am.lookup_path('/blog/application-234joisdfjaosf.js')
+
+  # rack application
+  am = Skyrocket::AssetManager.new
+
+  am.application
+
+  # compile assets
+  am = Skyrocket::AssetManager.new(:output => './public')
+  am.compile
+
+  # watch assets
+  am = Skyrocket::AssetManager.new
+  am.watch
+
+ERB helpers
+
+  <%= stylesheet_link_tag "application.css" %> <!-- includes application and all dependencies in order -->
+
+  <%= javascript_include_tag "application.js" %> <!-- includes application and all dependencies in order -->
+
+  <%= link_to 'Hello', 'elsewhere/asset_name.html', :class => 'btn' %>
+
+  <%= image_tag "home.gif", :height => 45 %>
+
+  <%= href 'elsewhere/asset_name.html' %> <!-- links to somewhere after base url -->
+  <%= href 'another_place' %> <!-- links to somewhere after the base url -->
+
+  <%= base_url %> <!-- the base url -->
+
+  <%= render 'partial_asset' %> <!-- includes a partial from lib directories -->
+
+  <%= yield %> <!-- if a template, include block -->
+  <%= yield :navbar %> <!-- if a template, include specific block -->
+
+  <% content_for :navbar do %> <% end %> <!-- if using a template, specify specific block content -->
+
+Less/CSS dependencies
+
+  /*
+   *=require something/theother
+   */
+
+  CoffeeScript dependencies
+
+  #
+  #= require joe
+
+  JavaScript
+
+  //= require foo

@@ -1,2 +1,4 @@
 #!/usr/bin/env ruby
 
+require 'skyrocket/cmd'
+Skyrocket::Cmd.new(ARGV).run
