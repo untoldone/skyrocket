@@ -19,13 +19,18 @@ Command line functionality:
   skyrocket compile -b /blog
   compiles with a different base url
 
+  skyrocket init
+  generates directories for asset_dirs, lib_dirs, and output_dir
+
 Code use cases
 
   # access assets
   am = Skyrocket::AssetManager.new('./different/asset/dir', :lib => ['./another/lib/asset'], :base_url => '/blog', :style => :minified)
-  am['application.js']
+  am['/blog/application-234joisdfjaosf.js']
 
-  am.lookup_path('/blog/application-234joisdfjaosf.js')
+  am.asset('application.js')
+
+  am.asset_requires('application.js') # => ['joe.js', 'jquery.js']
 
   # rack application
   am = Skyrocket::AssetManager.new

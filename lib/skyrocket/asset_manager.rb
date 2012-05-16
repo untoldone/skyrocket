@@ -9,10 +9,14 @@ module Skyrocket
     end
 
     def [](path)
-      raise NotImplementedError 
+      raise NotImplementedError
     end
 
-    def lookup_asset(lookup_asset)
+    def asset_requires(asset)
+      raise NotImplementedError
+    end
+
+    def asset(asset)
       raise NotImplementedError
     end
 
