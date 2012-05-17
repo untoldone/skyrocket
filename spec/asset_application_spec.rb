@@ -2,11 +2,17 @@ require 'rspec'
 require 'rack/builder'
 require 'rack/test'
 
-describe Skyrocket::SquareApplication do
+describe Skyrocket::AssetApplication do
   include Rack::Test::Methods
 
+  class FakeManager
+    def asset_by_path(asset)
+      asset == '/blog/hello.txt' ? 'Hello World!' : nil
+    end
+  end
+
   before :all do
-    @app = Skyrocket::SquareApplication.new("/blog/hello.txt" => 'Hello World!')
+    @app = Skyrocket::AssetApplication.new(FakeManager.new)
   end
 
   def app

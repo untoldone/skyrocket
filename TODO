@@ -67,6 +67,8 @@ ERB helpers
 
   <% content_for :navbar do %> <% end %> <!-- if using a template, specify specific block content -->
 
+  <% template layout %> <!-- specify a layout to use -->
+
 Less/CSS dependencies
 
   /*
@@ -81,3 +83,17 @@ Less/CSS dependencies
   JavaScript
 
   //= require foo
+
+
+  Assets:
+
+  am = Skyrocket::AssetManager.new
+
+  asset = am.asset('index.js.coffee')
+
+
+  asset.name            # index.js
+  asset.fullpath        # /home/michael/Source/test/assets/public/index.js.coffee
+  asset.lib_asset?      # false
+  asset.output_path     # /home/michael/Source/test/public/index.js
+  asset.required_assets # [<asset #name 'one.js'>, <asset $name 'subdir/two.js'>]
