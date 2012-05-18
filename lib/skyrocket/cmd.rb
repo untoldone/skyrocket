@@ -1,10 +1,11 @@
 require 'optparse'
+require 'fileutils'
 require 'skyrocket'
 
 module Skyrocket
   # CMD execution controller
   class Cmd
-    COMMANDS = %w(compile watch)
+    COMMANDS = %w(compile init watch)
 
     def initialize(argv)
       @options = {
@@ -19,8 +20,8 @@ module Skyrocket
       @command = argv.shift
       @arguments = argv
 
-      @options[:assets] << './assets/public' unless @options[:asset_dirs].length
-      @options[:assets_lib] << './assets/lib' unless @options[:lib_dirs].length
+      @options[:asset_dirs] << './assets/public' unless @options[:asset_dirs].length > 0
+      @options[:lib_dirs]   << './assets/lib'    unless @options[:lib_dirs].length > 0
     end
 
     def parser
@@ -48,8 +49,25 @@ module Skyrocket
         case @command
         when "compile"
           am.compile
+        when "init"
+          @options[:asset_dirs].each{ |dir| FileUtils.mkdir_p(dir) }
+          @options[:lib_dirs].each{ |dir| FileUtils.mkdir_p(dir) }
+          FileUtils.mkdir_p(@options[:output_dir])
         when "watch"
-          am.watch
+          begin
+            am.watch do |action, asset_name|
+              case action
+              when :deleted
+                puts "     \e[31;40m** Deleted  **\e[0m #{asset_name}"
+              when :created
+                puts "     \e[32;40m** Created  **\e[0m #{asset_name}"
+              when :modified
+                puts "     \e[33;40m** Modified **\e[0m #{asset_name}"
+              end
+            end
+          rescue Gem::LoadError => e
+            puts "'watch' command requires the gem '#{e.name}' of version '#{e.version}'' be installed."
+          end
         end
       elsif @command.nil?
         puts "Command required"

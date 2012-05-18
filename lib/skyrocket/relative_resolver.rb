@@ -1,8 +1,14 @@
 module Skyrocket
   class RelativeResolver
-    def initialize(file, asset_manager)
+    def initialize(asset_manager)
       @file = file
       @am = asset_manager
+    end
+
+    def asset_name_variations(filename)
+      [filename, 
+       filename.chomp(File.extname(filename)),
+       filename.sub(/\..*$/, '')]
     end
 
     # order:
@@ -15,8 +21,8 @@ module Skyrocket
     # something.html
     # something.html.erb
 
-    def resolve_path(path)
-
+    def resolve_path(path, relative_asset = nil)
+      
     end
   end
 end

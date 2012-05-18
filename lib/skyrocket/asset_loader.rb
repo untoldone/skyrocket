@@ -28,8 +28,8 @@ module Skyrocket
       @body  += "\n" if @body != "" && @body !~ /\n\Z/m
     end
 
-    def directives
-      @directives ||= @headers.each.map do |line|
+    def requires
+      @requires ||= @headers.each.map do |line|
         if directive = line[DIRECTIVE_PATTERN, 1]
           name, arg = Shellwords.shellwords(directive)
           arg if name == 'require'

@@ -1,40 +1,66 @@
-require 'pathname'
+require 'ruby-debug'
 
 module Skyrocket
   class Asset
-    PROCESSORS = [CoffeescriptProcessor.new, ErbProcessor.new, LessProcessor.new]
+    attr_reader :name
 
-    private_class_method :new
-    attr_reader :name, :filepath
+    PROCESSORS = [Skyrocket::CoffeescriptProcessor.new,
+                  Skyrocket::ErbProcessor.new, 
+                  Skyrocket::LessProcessor.new]
 
-    def initialize(base, asset_path, asset_manager)
-      @base = base
-      @asset_path = asset_path
-      @asset_manager = asset_manager
-      @filepath = base + asset_path
-      PROCESSORS.each do |processor|
-        if processor.process?(@asset_path)
-          @processor = processor
-          @name = processor.post_process_name
+    def initialize(filepath)
+      @filepath = filepath
+      @@am.asset_dirs.each do |dir|
+        if filepath.start_with?(dir)
+          @dir = dir
+          @name = filepath.split(dir + "/")[1]
+          PROCESSORS.each do |processor|
+            if processor.process?(@name)
+              @processor = processor
+              @name = processor.post_process_name(@name)
+              break
+            end
+          end
           break
         end
       end
-      all[@filepath] = self
+
+      @@am.lib_dirs.each do |dir|
+        if filepath.start_with?(dir)
+          @dir = dir
+          @name = filepath.split(dir + "/")[1]
+          PROCESSORS.each do |processor|
+            if processor.process?(filepath)
+              @processor = processor
+              @name = processor.post_process_name(filepath)
+              break
+            end
+          end
+          break
+        end
+      end unless @name     
     end
 
-    Asset.load(dir, file.split(dir)[1], type, self)
+    def self.cache_all(asset_manager)
+      @@am = asset_manager
+      @@all = Hash.new
 
-    def self.cache(dir, filename, type, asset_manager)
-      
     end
 
-    def required_assets
-      raise NotImplementedError
+    def self.all_public
+
     end
 
-  private
-    def self.all
-      @@all ||= Hash.new
+    def related
+      []
+    end
+
+    def write
+      true
+    end
+
+    def delete
+
     end
   end
 end
