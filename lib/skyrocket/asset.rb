@@ -1,4 +1,5 @@
 require 'ruby-debug'
+require 'fileutils'
 
 module Skyrocket
   class Asset
@@ -38,17 +39,26 @@ module Skyrocket
           end
           break
         end
-      end unless @name     
+      end unless @name
     end
 
     def self.cache_all(asset_manager)
       @@am = asset_manager
       @@all = Hash.new
-
+      asset_manager.asset_dirs.each do |asset_dir|
+        file_list = Dir[asset_dir + "/**/*"].map{|a| File.expand_path(a)}
+        file_list.each do |fpath|
+          @@all[fpath] = Asset.new(fpath) if(File.file?(fpath))
+        end
+      end
     end
 
     def self.all_public
+      @@all.values
+    end
 
+    def output_path
+      @@am.output_dir + "/" + @name
     end
 
     def related
@@ -56,7 +66,23 @@ module Skyrocket
     end
 
     def write
-      true
+      cont = File.read(@filepath)
+      cont = @processor.process(cont) if @processor
+      if(File.exist?(output_path))
+        existing = File.read(output_path)
+        if existing != cont
+          File.open(output_path, 'w') { |f| f.write(cont) }
+          :modified
+        else
+          :no_change
+        end
+      else
+        dirname = File.dirname(output_path)
+        puts dirname
+        FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+        File.open(output_path, 'w') { |f| f.write(cont) }
+        :created
+      end
     end
 
     def delete

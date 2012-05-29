@@ -43,30 +43,32 @@ module Skyrocket
       end
     end
 
+    def format_results(action, asset_name)
+      case action
+      when :deleted
+        puts "     \e[31;40m** Deleted  **\e[0m #{asset_name}"
+      when :created
+        puts "     \e[32;40m** Created  **\e[0m #{asset_name}"
+      when :modified
+        puts "     \e[33;40m** Modified **\e[0m #{asset_name}"
+      end
+    end
+
     def run
       if COMMANDS.include?(@command)
         am = AssetManager.new(@options)
         case @command
         when "compile"
-          am.compile
+          am.compile(&method(:format_results))
         when "init"
           @options[:asset_dirs].each{ |dir| FileUtils.mkdir_p(dir) }
           @options[:lib_dirs].each{ |dir| FileUtils.mkdir_p(dir) }
           FileUtils.mkdir_p(@options[:output_dir])
         when "watch"
           begin
-            am.watch do |action, asset_name|
-              case action
-              when :deleted
-                puts "     \e[31;40m** Deleted  **\e[0m #{asset_name}"
-              when :created
-                puts "     \e[32;40m** Created  **\e[0m #{asset_name}"
-              when :modified
-                puts "     \e[33;40m** Modified **\e[0m #{asset_name}"
-              end
-            end
+            am.watch(&method(:format_results))
           rescue Gem::LoadError => e
-            puts "'watch' command requires the gem '#{e.name}' of version '#{e.version}'' be installed."
+            puts "'watch' command requires the gem '#{e.name}' of version '#{e.requirement}'' be installed."
           end
         end
       elsif @command.nil?
