@@ -12,6 +12,7 @@ test/tmp
 test/version_tmp
 tmp
 public
+gemfile.lock
 
 # YARD artifacts
 .yardoc

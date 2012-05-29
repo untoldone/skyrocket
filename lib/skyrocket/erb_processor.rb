@@ -1,3 +1,5 @@
+require 'erb'
+
 module Skyrocket
   class ErbProcessor
     include Processor
@@ -5,7 +7,8 @@ module Skyrocket
     def extension; '.erb'; end
 
     def process(contents)
-      contents
+      template = ERB.new(contents)
+      template.result(binding)
     end
   end
 end

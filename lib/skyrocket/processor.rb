@@ -11,5 +11,13 @@ module Skyrocket
     def post_process_name(file)
       file.chomp(File.extname(file))
     end
+
+    def asset_manager=(am)
+      @@am = am
+    end
+
+    def asset_manager
+      @@am
+    end
   end
 end

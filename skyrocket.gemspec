@@ -10,14 +10,13 @@ Gem::Specification.new do |s|
   s.files = Dir["README.md", "LICENSE", "lib/**/*.rb"]
   s.executables = ["skyrocket"]
 
-  s.add_dependency "rack", "~> 1.0"
+  s.add_dependency "therubyracer"
+  s.add_dependency "less"
+  s.add_dependency "coffee-script"
 
-  s.add_development_dependency "coffee-script", "~> 2.0"
-  s.add_development_dependency "coffee-script-source", "~> 1.2.0"
   s.add_development_dependency "rack-test"
   s.add_development_dependency "rspec", "~> 2.0"
   s.add_development_dependency "rake"
-  s.add_development_dependency "sass", "~> 3.1"
 
   s.authors = ["Michael Wasser"]
   s.email = ["michael@raveld.com"]

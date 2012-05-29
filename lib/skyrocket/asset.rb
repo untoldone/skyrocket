@@ -44,6 +44,7 @@ module Skyrocket
 
     def self.cache_all(asset_manager)
       @@am = asset_manager
+      PROCESSORS[0].asset_manager = asset_manager
       @@all = Hash.new
       asset_manager.asset_dirs.each do |asset_dir|
         file_list = Dir[asset_dir + "/**/*"].map{|a| File.expand_path(a)}
