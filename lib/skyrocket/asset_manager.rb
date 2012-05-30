@@ -63,11 +63,9 @@ module Skyrocket
     def process_removed(removed)
       removed.each do |file|
         asset = Asset.new(file)
-        compile_related(asset).each do |related|
-          yield(:deleted, related.name) if block_given?
-        end
         yield(:deleted, asset.name) if block_given?
-        asset.delete
+        File.delete(asset.output_path)
+        # TODO: Check if delete parent directories
       end
     end
 
@@ -75,9 +73,6 @@ module Skyrocket
       added.each do |file|
         asset = Asset.new(file)
         yield(:created, asset.name) if asset.write && block_given?
-        compile_related(asset).each do |asset|
-          yield(:modified, asset.name) if block_given?
-        end
       end
     end
 
@@ -85,16 +80,7 @@ module Skyrocket
       modified.each do |file|
         asset = Asset.new(file)
         yield(:modified, asset.name) if asset.write && block_given?
-        compile_related(asset).each do |asset|
-          yield(:modified, asset.name) if block_given?
-        end
       end
-    end
-
-    def compile_related(asset)
-      assets = asset.related
-      assets.each { |asset| asset.write }
-      assets
     end
   end
 end
