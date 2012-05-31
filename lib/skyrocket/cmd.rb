@@ -65,6 +65,10 @@ module Skyrocket
           @options[:lib_dirs].each{ |dir| FileUtils.mkdir_p(dir) }
           FileUtils.mkdir_p(@options[:output_dir])
         when "watch"
+          trap("SIGINT") do
+            puts "Ending watch..."
+            exit!
+          end
           begin
             am.watch(&method(:format_results))
           rescue Gem::LoadError => e

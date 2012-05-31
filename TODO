@@ -67,7 +67,7 @@ ERB helpers
 
   <% content_for :navbar do %> <% end %> <!-- if using a template, specify specific block content -->
 
-  <% template layout %> <!-- specify a layout to use -->
+  <% layout 'layout.html' %> <!-- specify a layout to use -->
 
 Less/CSS dependencies
 

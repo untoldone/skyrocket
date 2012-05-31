@@ -17,7 +17,7 @@ module Skyrocket
           @name = filepath.split(dir + "/")[1]
           PROCESSORS.each do |processor|
             if processor.process?(@name)
-              @processor = processor
+              @processor = processor.class.new # make a new instance so we might write more thread safe code
               @name = processor.post_process_name(@name)
               break
             end
@@ -32,7 +32,7 @@ module Skyrocket
           @name = filepath.split(dir + "/")[1]
           PROCESSORS.each do |processor|
             if processor.process?(filepath)
-              @processor = processor
+              @processor = processor.class.new
               @name = processor.post_process_name(filepath)
               break
             end
@@ -40,6 +40,20 @@ module Skyrocket
           break
         end
       end unless @name
+    end
+
+    def self.from_name(name)
+      @@am.asset_dirs.each do |dir|
+        if(File.exist?(File.join(dir, name)))
+          return new(File.join(dir, name))
+        else
+          PROCESSORS.each do |processor|
+            filename = File.join(dir, name) + processor.extname
+            return new (filename) if File.exist?(filename)
+          end
+        end
+      end
+      nil
     end
 
     def self.cache_all(asset_manager)
@@ -62,32 +76,32 @@ module Skyrocket
       @@am.output_dir + "/" + @name
     end
 
-    def related
-      []
+    def content
+      return @content if @content
+      @content = File.read(@filepath)
+      @content = @processor.process(@content) if @processor
+      return @content
+    end
+
+    def raw
+      File.read(@filepath)
     end
 
     def write
-      cont = File.read(@filepath)
-      cont = @processor.process(cont) if @processor
       if(File.exist?(output_path))
         existing = File.read(output_path)
-        if existing != cont
-          File.open(output_path, 'w') { |f| f.write(cont) }
+        if existing != content
+          File.open(output_path, 'w') { |f| f.write(content) }
           :modified
         else
           :no_change
         end
       else
         dirname = File.dirname(output_path)
-        puts dirname
         FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
-        File.open(output_path, 'w') { |f| f.write(cont) }
+        File.open(output_path, 'w') { |f| f.write(content) }
         :created
       end
-    end
-
-    def delete
-
     end
   end
 end

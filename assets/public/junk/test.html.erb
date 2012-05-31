@@ -1,4 +1,17 @@
 <html>
 
-  <%= "hello world" %>
+  <%= stylesheet_link_tag "application.css" %> <!-- includes application and all dependencies in order -->
+
+  <%= javascript_include_tag "application.js" %> <!-- includes application and all dependencies in order -->
+
+  <%= link_to 'Hello', 'elsewhere/asset_name.html', :class => 'btn' %>
+
+  <%= image_tag "home.gif", :height => 45 %>
+
+  <%= href 'elsewhere/asset_name.html' %> <!-- links to somewhere after base url -->
+  <%= href 'another_place' %> <!-- links to somewhere after the base url -->
+  <%= href '/another_place2' %>
+  <%= href 'http://bla/another_place2' %>
+
+  <%= base_url %> <!-- the base url -->
 </html>

@@ -4,6 +4,10 @@ module Skyrocket
       raise NotImplimentedError.new("must impliment #{caller[0][/`.*'/][1..-2]} for #{self.class.name}")
     end
 
+    def process(contents)
+      raise NotImplimentedError.new("must impliment #{caller[0][/`.*'/][1..-2]} for #{self.class.name}")
+    end
+
     def process?(file)
       File.extname(file) == extension
     end
