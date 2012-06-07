@@ -3,7 +3,7 @@ require 'fileutils'
 
 module Skyrocket
   class Asset
-    attr_reader :name
+    attr_reader :name, :dir, :processor
 
     PROCESSORS = [Skyrocket::CoffeescriptProcessor.new,
                   Skyrocket::ErbProcessor.new, 
@@ -105,3 +105,4 @@ module Skyrocket
     end
   end
 end
+
