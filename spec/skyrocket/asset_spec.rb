@@ -2,31 +2,26 @@ require 'rspec'
 require 'skyrocket'
 
 describe Skyrocket::Asset do
-  let(:dir) { File.expand_path('../../fixture', __FILE__) }
-  let(:am) do 
-    Skyrocket::AssetManager.new(
-      :asset_dirs => [dir + '/assets/public'],
-      :lib_dirs => [],
-      :output_dir => dir + '/public',
-      :base_url => '/',
-      :style => 'minify')
+  class TestProcessor
+    include Skyrocket::Processor
+    def post_process_name(h); "blah.html"; end
+    def process(c); "processed!"; end
   end
-  before(:all) { Skyrocket::Asset.cache_all(am) }
-  describe '#initialize' do
-    let(:asset) { Skyrocket::Asset.new(dir + '/assets/public/test.html.erb') }
-    it 'should set the filepath' do
-      asset.name.should == 'test.html'
-    end
 
-    context 'filepath starts with an asset_dir' do
-      it 'should set the dir' do
-        asset.dir.should == "#{dir}/assets/public"
-      end
-      context 'processor should process a filepath' do
-        it 'should set the processor class' do
-          asset.processor.class.should == Skyrocket::ErbProcessor
-        end
-      end
-    end
+  let(:processor) { TestProcessor.new }
+  let(:asset) { Skyrocket::Asset.new('/one', 'two.html.erb', '/two', processor) }
+ 
+  it 'should return an output_path adjusted for processor extension and with output_dir' do
+    asset.output_path.should == '/two/blah.html'
+  end
+
+  it 'should return raw content of asset' do
+    File.stub(:read).with('/one/two.html.erb').and_return('hello')
+    asset.raw.should == 'hello'
+  end
+
+  it 'should return processed content of asset' do
+    File.stub(:read).with('/one/two.html.erb').and_return('hello')
+    asset.content.should == 'processed!'
   end
 end

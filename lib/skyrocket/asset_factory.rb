@@ -4,11 +4,27 @@ module Skyrocket
       @asset_dirs = asset_dirs
       @lib_dirs = lib_dirs
       @output_dir = output_dir
+      @pf = ProcessorFactory.new
     end
 
     def build_asset(filepath)
       dir, file = parts(filepath)
+      @pf.process?(file)
       Asset.new(dir, file, @output_dir)
+    end
+
+    def from_name(name)
+      @@am.asset_dirs.each do |dir|
+        if(File.exist?(File.join(dir, name)))
+          return Asset.new(dir, file, @output_dir)
+        else
+          PROCESSORS.each do |processor|
+            filename = File.join(dir, name) + processor.extname
+            return new (filename) if File.exist?(filename)
+          end
+        end
+      end
+      raise AssetNotFoundError
     end
 
   private
