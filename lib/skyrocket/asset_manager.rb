@@ -12,6 +12,9 @@ module Skyrocket
       @style = options[:style]
       @af = AssetFactory.new(@asset_dirs, @lib_dirs, @output_dir)
       @aw = AssetWriter.new
+      @al = AssetLocator.new(@af)
+      Processor.asset_factory = @af
+      Processor.base_url = @base_url
     end
 
     def compile(&block)
@@ -24,58 +27,30 @@ module Skyrocket
 
       update_public(&block)
 
-      Listen.to(*(@asset_dirs + @lib_dirs)) do |modified, added, removed| 
-        process_removed(removed, &block)
-        process_modified(modified, &block)
-        process_added(added, &block)
+      Listen.to(*(@asset_dirs + @lib_dirs)) do |modified, added, removed|
+        (modified + added).each { |am| process_changes(@af.build_asset(am, &block)) }
+        removed.each { |del| process_deleted(del, &block) }
       end
     end
 
   private
-    def update_public 
-      # Cleanup output directory
-      out_cont = Dir[@output_dir + "/**/*"]
-                    .map { |a| File.expand_path(a) }
-                    .select { |b| File.file?(b) }
-      asset_cont = Asset.all_public.map { |a| a.output_path }
-      out_cont.select { |file| !asset_cont.include?(file) }
-        .each do |out_file|
-          yield(:deleted, out_file.sub(@output_dir + "/", '')) if block_given?
-          File.delete(out_file)
-        end
+    def update_public(&block)
+      @al.missing_asset_paths.each { |p| process_deleted(p, &block) }
+      @al.all_assets.each { |a| process_change(a, &block) }
+    end
 
-
-      # Create/ Modify existing files
-      Asset.all_public.each do |asset|
-        case @aw.write(asset)
-        when :created
-          yield(:created, asset.name) if block_given?
-        when :modified
-          yield(:modified, asset.name) if block_given?
-        end
+    def process_change(asset)
+      case @aw.write(asset)
+      when :created
+        yield(:created, asset.name) if block_given?
+      when :modified
+        yield(:modified, asset.name) if block_given?
       end
     end
 
-    def process_removed(removed)
-      removed.each do |file|
-        asset = @af.build_asset(file)
-        yield(:deleted, asset.name) if block_given?
-        @aw.delete(asset)
-      end
-    end
-
-    def process_added(added)
-      added.each do |file|
-        asset = @af.build_asset(file)
-        yield(:created, asset.name) if @aw.write(asset) && block_given?
-      end
-    end
-
-    def process_modified(modified)
-      modified.each do |file|
-        asset = Asset.new(file)
-        yield(:modified, asset.name) if @aw.write(asset) && block_given?
-      end
+    def process_deleted(path)
+      @aw.delete(path)
+      yield(:deleted, path.gsub(@output_dir + '/', '')) if block_given?
     end
   end
 end

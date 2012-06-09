@@ -11,7 +11,7 @@ module Skyrocket
       template = ERB.new(contents, nil, '-', '@out')
       results = template.result(get_binding { |name=nil| '' })
       if(@layout)
-        outer_contents = Asset.from_name(@layout).raw
+        outer_contents = asset_factory.from_name(@layout).raw
         outer_template = ERB.new(outer_contents, nil, '-', '@out')
         results = outer_template.result(get_binding do |name=nil|
           if name == nil
@@ -55,10 +55,6 @@ module Skyrocket
       resolve(path)
     end
 
-    def base_url
-      asset_manager.base_url
-    end
-
     def content_for(key)
       # swap current ERB output buffer with a 'fake' buffer
       # otherwise calling yield will write contents of block
@@ -73,7 +69,7 @@ module Skyrocket
     end
 
     def render(asset_name)
-      contents = Asset.from_name(asset_name).raw
+      contents = asset_factory.from_name(asset_name).raw
       old = @out # save current ERB buffer
       @out = ''
       template = ERB.new(contents, nil, '-', '@out')

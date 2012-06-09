@@ -13,7 +13,7 @@ module Skyrocket
 
   private
     def parser
-      @@parser ||= Less::Parser.new(:paths => asset_manager.asset_dirs + asset_manager.lib_dirs)
+      @@parser ||= Less::Parser.new(:paths => asset_factory.asset_dirs + asset_factory.lib_dirs)
     end
   end
 end

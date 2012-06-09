@@ -4,7 +4,7 @@ describe Skyrocket::AssetFactory do
   let(:factory) { Skyrocket::AssetFactory.new(['/one'], ['/two'], '/three') }
   it 'should build assets with dir, name, and out_dir' do
     Skyrocket::Asset.stub(:new)
-                      .with('/one', 'other.html', '/three')
+                      .with('/one', 'other.html', '/three', an_instance_of(Skyrocket::EmptyProcessor))
                       .and_return('You Got Me')
     asset = factory.build_asset('/one/other.html')
     asset.should == "You Got Me"
@@ -12,7 +12,7 @@ describe Skyrocket::AssetFactory do
 
   it 'should return an asset based off of the asset name' do
     Skyrocket::Asset.stub(:new)
-                      .with('/one', 'joe/shmo.html.erb', '/three')
+                      .with('/one', 'joe/shmo.html.erb', '/three', an_instance_of(Skyrocket::ErbProcessor))
                       .and_return('You Got Me2')
     Dir.stub('[]').with('/one/joe/shmo.html.*').and_return(['/one/joe/shmo.html.erb'])
     Dir.stub('[]').with('/two/joe/shmo.html.*').and_return([])

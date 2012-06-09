@@ -1,5 +1,6 @@
 module Skyrocket
   class AssetFactory
+    attr_reader :asset_dirs, :lib_dirs, :output_dir
     def initialize(asset_dirs, lib_dirs = [], output_dir)
       @asset_dirs = asset_dirs
       @lib_dirs = lib_dirs
@@ -9,8 +10,7 @@ module Skyrocket
 
     def build_asset(filepath)
       dir, file = parts(filepath)
-      @pf.process?(file)
-      Asset.new(dir, file, @output_dir)
+      Asset.new(dir, file, @output_dir, @pf.processor(file))
     end
 
     def from_name(name)
@@ -19,7 +19,7 @@ module Skyrocket
         found.each do |file|
           if @pf.post_process_name(file) =~ /#{name}$/
             dir, file = parts(file)
-            return Asset.new(dir, file, @output_dir)
+            return Asset.new(dir, file, @output_dir, @pf.processor(file))
           end
         end
       end

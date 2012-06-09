@@ -1,7 +1,7 @@
 module Skyrocket
   class ProcessorFactory
    
-    PROCESSORS = [ CoffeescriptProcessor, ErbProcessor, LessProcessor ]
+    PROCESSORS = [ CoffeescriptProcessor, ErbProcessor, LessProcessor, EmptyProcessor ]
 
     def process?(filename)
       PROCESSORS.each do |processor|

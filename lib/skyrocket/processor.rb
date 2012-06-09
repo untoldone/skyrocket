@@ -9,11 +9,28 @@ module Skyrocket
     end
 
     def process?(file)
-      File.extname(file) == extension
+      ext = File.extname(file)
+      (ext =~ /#{extension}$/) != nil 
     end
 
     def post_process_name(file)
-      file.chomp(File.extname(file))
+      file.chomp(extension)
+    end
+
+    def self.asset_factory=(asset_factory)
+      @@af = asset_factory
+    end
+
+    def asset_factory
+      @@af
+    end
+
+    def self.base_url=(base_url)
+      @@bu = base_url
+    end
+
+    def base_url
+      @@bu
     end
   end
 end
