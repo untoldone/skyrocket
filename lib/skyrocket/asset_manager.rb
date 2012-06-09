@@ -28,8 +28,11 @@ module Skyrocket
       update_public(&block)
 
       Listen.to(*(@asset_dirs + @lib_dirs)) do |modified, added, removed|
-        (modified + added).each { |am| process_changes(@af.build_asset(am, &block)) }
-        removed.each { |del| process_deleted(del, &block) }
+        (modified + added).each { |am| process_change(@af.build_asset(am), &block) }
+        removed.each do |del|
+          as = @af.build_asset(del)
+          process_deleted(as.output_path, &block)
+        end
       end
     end
 
