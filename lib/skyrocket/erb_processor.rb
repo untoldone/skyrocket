@@ -1,5 +1,4 @@
 require 'erb'
-require 'ruby-debug'
 
 module Skyrocket
   class ErbProcessor
