@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
 
   s.authors = ["Michael Wasser"]
-  s.email = ["michael@raveld.com"]
-  s.homepage = "http://www.raveld.com/"
+  s.email = ["michael.m.wasser@gmail.com"]
+  s.homepage = "http://www.mikewasser.com/"
 end
