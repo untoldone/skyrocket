@@ -10,6 +10,14 @@ module Skyrocket
       return false
     end
 
+    def post_process_name(filename)
+      if process?(filename)
+        processor(filename).post_process_name(filename)
+      else
+        filename
+      end
+    end
+
     def processor(filename)
       PROCESSORS.each do |processor|
         return processor.new if processor.new.process?(filename)

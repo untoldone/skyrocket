@@ -10,7 +10,8 @@ module Skyrocket
       @output_dir = Pathname.new(options[:output_dir]).realpath.to_s
       @base_url = options[:base_url]
       @style = options[:style]
-      Asset.cache_all(self)
+      @af = AssetFactory.new(@asset_dirs, @lib_dirs, @output_dir)
+      @aw = AssetWriter.new
     end
 
     def compile(&block)
@@ -31,7 +32,7 @@ module Skyrocket
     end
 
   private
-    def update_public
+    def update_public 
       # Cleanup output directory
       out_cont = Dir[@output_dir + "/**/*"]
                     .map { |a| File.expand_path(a) }
@@ -43,15 +44,10 @@ module Skyrocket
           File.delete(out_file)
         end
 
-      # Remove empty directories in output dir
-      Dir[@output_dir + '/**/*']
-        .select { |d| File.directory? d }
-        .select { |d| (Dir.entries(d) - %w[ . .. ]).empty? }
-        .each   { |d| Dir.rmdir d }
 
       # Create/ Modify existing files
       Asset.all_public.each do |asset|
-        case asset.write
+        case @aw.write(asset)
         when :created
           yield(:created, asset.name) if block_given?
         when :modified
@@ -62,24 +58,23 @@ module Skyrocket
 
     def process_removed(removed)
       removed.each do |file|
-        asset = Asset.new(file)
+        asset = @af.build_asset(file)
         yield(:deleted, asset.name) if block_given?
-        File.delete(asset.output_path)
-        # TODO: Check if delete parent directories
+        @aw.delete(asset)
       end
     end
 
     def process_added(added)
       added.each do |file|
-        asset = Asset.new(file)
-        yield(:created, asset.name) if asset.write && block_given?
+        asset = @af.build_asset(file)
+        yield(:created, asset.name) if @aw.write(asset) && block_given?
       end
     end
 
     def process_modified(modified)
       modified.each do |file|
         asset = Asset.new(file)
-        yield(:modified, asset.name) if asset.write && block_given?
+        yield(:modified, asset.name) if @aw.write(asset) && block_given?
       end
     end
   end

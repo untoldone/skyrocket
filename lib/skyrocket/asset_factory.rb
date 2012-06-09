@@ -14,16 +14,16 @@ module Skyrocket
     end
 
     def from_name(name)
-      @@am.asset_dirs.each do |dir|
-        if(File.exist?(File.join(dir, name)))
-          return Asset.new(dir, file, @output_dir)
-        else
-          PROCESSORS.each do |processor|
-            filename = File.join(dir, name) + processor.extname
-            return new (filename) if File.exist?(filename)
+      found = dir_search(name, @asset_dirs + @lib_dirs)
+      if found.length > 0
+        found.each do |file|
+          if @pf.post_process_name(file) =~ /#{name}$/
+            dir, file = parts(file)
+            return Asset.new(dir, file, @output_dir)
           end
         end
       end
+      
       raise AssetNotFoundError
     end
 
@@ -41,6 +41,14 @@ module Skyrocket
         end
       end
       raise PathNotInAssetsError.new
+    end
+
+    def dir_search(part, dirs)
+      found = Array.new 
+      dirs.each do |dir|
+        found += Dir[dir + "/" + part + ".*"]
+      end
+      found
     end
   end
 end

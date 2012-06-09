@@ -11,13 +11,17 @@ module Skyrocket
       @processor = processor
     end
 
+    def name
+      @processor.post_process_name(@filename)
+    end
+
     def output_path
       @output_dir + "/" + @processor.post_process_name(@filename)
     end
 
     def content
       return @content if @content
-      @content = File.read(File.join(@dir, @filename))
+      @content = raw 
       @content = @processor.process(@content) if @processor
       return @content
     end
