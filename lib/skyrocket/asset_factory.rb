@@ -17,7 +17,7 @@ module Skyrocket
       found = dir_search(name, @asset_dirs + @lib_dirs)
       if found.length > 0
         found.each do |file|
-          if @pf.post_process_name(file) =~ /#{name}$/
+          if @pf.post_process_name(file) =~ /#{name}$/ || file =~ /#{name}$/
             dir, file = parts(file)
             return Asset.new(dir, file, @output_dir, @pf.processor(file))
           end
@@ -46,7 +46,7 @@ module Skyrocket
     def dir_search(part, dirs)
       found = Array.new 
       dirs.each do |dir|
-        found += Dir[dir + "/" + part + ".*"]
+        found += (Dir[dir + "/" + part] + Dir[dir + "/" + part + ".*"])
       end
       found
     end
