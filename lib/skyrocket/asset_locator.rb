@@ -7,7 +7,7 @@ module Skyrocket
     end
 
     def all_assets
-      dirs = @af.asset_dirs + @af.lib_dirs
+      dirs = @af.asset_dirs
       paths = Array.new
       dirs.each do |dir|
         paths += Dir.glob_files(dir + "/**/*")
