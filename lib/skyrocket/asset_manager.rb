@@ -25,13 +25,23 @@ module Skyrocket
       gem 'listen', '>=0.4.2'
       require 'listen'
 
-      update_public(&block)
+      begin
+        update_public(&block)
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+      end
 
       Listen.to(*(@asset_dirs)) do |modified, added, removed|
-        (modified + added).each { |am| process_change(@af.build_asset(am), &block) }
-        removed.each do |del|
-          as = @af.build_asset(del)
-          process_deleted(as.output_path, &block)
+        begin
+          (modified + added).each { |am| process_change(@af.build_asset(am), &block) }
+          removed.each do |del|
+            as = @af.build_asset(del)
+            process_deleted(as.output_path, &block)
+          end
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace
         end
       end
     end
