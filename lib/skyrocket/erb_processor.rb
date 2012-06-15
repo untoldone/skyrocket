@@ -16,7 +16,7 @@ module Skyrocket
           if name == nil
             results
           else
-            @content_for[name.to_sym]
+            cf[name.to_sym] || ''
           end
         end)
       end
@@ -62,8 +62,8 @@ module Skyrocket
       @out = ''
       results = yield.chomp
       @out = old
-      @content_for ||= Hash.new
-      @content_for[key.to_sym] = results
+      cf ||= Hash.new
+      cf[key.to_sym] = results
       nil
     end
 
@@ -76,7 +76,7 @@ module Skyrocket
         if name == nil
           results
         else
-          @content_for[name.to_sym]
+          cf[name.to_sym]
         end
       end)
       @out = old
@@ -90,6 +90,10 @@ module Skyrocket
       else
         base_url == '/' ? "#{base_url}#{path}" : "#{base_url}/#{path}"
       end
+    end
+
+    def cf
+      @content_for ||= Hash.new
     end
 
     def to_opt_s(options)
