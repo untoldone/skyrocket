@@ -5,9 +5,9 @@ module Skyrocket
     attr_reader :asset_dirs, :lib_dirs, :output_dir, :base_url, :style
 
     def initialize(options)
-      @asset_dirs = options[:asset_dirs].map{ |ad| Pathname.new(ad).realpath.to_s }
-      @lib_dirs = options[:lib_dirs].map{ |ld| Pathname.new(ld).realpath.to_s }
-      @output_dir = Pathname.new(options[:output_dir]).realpath.to_s
+      @asset_dirs = options[:asset_dirs].map{ |ad| File.expand_path(ad) }
+      @lib_dirs = options[:lib_dirs].map{ |ld| File.expand_path(ld) }
+      @output_dir = File.expand_path(options[:output_dir])
       @base_url = options[:base_url]
       @style = options[:style]
       @af = AssetFactory.new(@asset_dirs, @lib_dirs, @output_dir)
