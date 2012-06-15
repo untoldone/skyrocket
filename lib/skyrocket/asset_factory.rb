@@ -24,7 +24,7 @@ module Skyrocket
         end
       end
       
-      raise AssetNotFoundError
+      raise AssetNotFoundError.new("Asset not found '#{name}'")
     end
 
   private
