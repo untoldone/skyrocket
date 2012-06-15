@@ -40,7 +40,7 @@ module Skyrocket
       "<script src=\"#{resolve(path)}\"></script>"
     end
 
-    def link_to(content, path, options)
+    def link_to(content, path, options = Hash.new)
       opt_s = to_opt_s(options)
       "<a href=\"#{resolve(path)}\"#{opt_s}>#{content}</a>"
     end
