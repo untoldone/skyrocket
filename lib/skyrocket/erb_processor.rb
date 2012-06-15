@@ -62,7 +62,6 @@ module Skyrocket
       @out = ''
       results = yield.chomp
       @out = old
-      cf ||= Hash.new
       cf[key.to_sym] = results
       nil
     end
