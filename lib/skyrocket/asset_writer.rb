@@ -26,7 +26,7 @@ module Skyrocket
       dir_parts.length.times do |index|
         neg_index = -1 - index
         path = dir_parts[0..neg_index].join(File::SEPARATOR)
-        if Dir.entries(path).empty?
+        if Dir.entries(path) == ['.','..']
           Dir.rmdir(path)
         else
           break

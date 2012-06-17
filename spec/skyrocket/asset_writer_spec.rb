@@ -35,14 +35,14 @@ describe Skyrocket::AssetWriter do
 
   context '#delete' do
     it 'should delete a file and no directories if unempty' do
-      Dir.stub(:entries).with('/two/three').and_return(['hello'])
+      Dir.stub(:entries).with('/two/three').and_return(['.','..','hello'])
       File.should_receive(:delete).with('/two/three/test.html')
       Dir.should_not_receive(:rmdir)
       aw.delete(asset.output_path)
     end
 
     it 'should delete a file and any empty parent directories' do
-      Dir.stub(:entries).with('/two/three').and_return([])
+      Dir.stub(:entries).with('/two/three').and_return(['.','..'])
       Dir.stub(:entries).with('/two').and_return(['hello'])
       File.should_receive(:delete).with('/two/three/test.html')
       Dir.should_receive(:rmdir).with('/two/three')
