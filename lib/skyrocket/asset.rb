@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'digest/md5'
 
 module Skyrocket
   class Asset
@@ -20,7 +21,14 @@ module Skyrocket
     end
 
     def output_path
-      @output_dir + "/" + @processor.post_process_name(@filename)
+      @output_dir + "/" + output_name
+    end
+
+    def output_name
+      digest = Digest::MD5.hexdigest(content)
+      ppn = @processor.post_process_name(@filename)
+      ext = File.extname(ppn)
+      "#{ppn.chomp(ext)}_#{digest}#{ext}"
     end
 
     def content

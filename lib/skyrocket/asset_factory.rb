@@ -27,6 +27,19 @@ module Skyrocket
       raise AssetNotFoundError.new("Asset not found '#{name}'")
     end
 
+    def name_exist?(name)
+      found = dir_search(name, @asset_dirs + @lib_dirs)
+      if found.length > 0
+        found.each do |file|
+          if @pf.post_process_name(file) =~ /#{name}$/ || file =~ /#{name}$/
+            return true
+          end
+        end
+      end
+
+      return false
+    end
+
   private
     def parts(filepath)
       dir = file_dir(filepath, @asset_dirs + @lib_dirs)
