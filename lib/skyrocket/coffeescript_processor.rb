@@ -8,7 +8,7 @@ module Skyrocket
     def extension; '.coffee'; end
 
     def process_contents(contents, name)
-      CoffeeScript.compile(body)
+      CoffeeScript.compile(contents)
     end
   end
 end
