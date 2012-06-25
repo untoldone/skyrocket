@@ -5,7 +5,7 @@ module Skyrocket
     end
 
     def process(contents, name)
-      preprocess_contents(contents, name) if self.respond_to?(:preprocess_contents)
+      contents = preprocess_contents(contents, name) if self.respond_to?(:preprocess_contents)
       process_contents(contents, name)
     end
 

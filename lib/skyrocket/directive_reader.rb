@@ -25,7 +25,7 @@ module Skyrocket
 
     def self.split_parts(asset)
       raw = asset.raw
-      headers = raw[HEADER_PATTERN, 0].lines || [""]
+      headers = raw[HEADER_PATTERN, 0].to_s.lines || [""]
       body = $' || raw
       headers = headers.each.map do |line|
         if directive = line[DIRECTIVE_PATTERN, 1]
