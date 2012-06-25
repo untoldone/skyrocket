@@ -6,7 +6,7 @@ module Skyrocket
 
     def extension; '.erb'; end
 
-    def process(contents)
+    def process_contents(contents, name)
       template = ERB.new(contents, nil, '-', '@out')
       results = template.result(get_binding { |name=nil| '' })
       if(@layout)

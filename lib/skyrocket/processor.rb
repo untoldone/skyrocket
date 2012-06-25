@@ -4,8 +4,9 @@ module Skyrocket
       raise NotImplimentedError.new("must impliment #{caller[0][/`.*'/][1..-2]} for #{self.class.name}")
     end
 
-    def process(contents)
-      raise NotImplimentedError.new("must impliment #{caller[0][/`.*'/][1..-2]} for #{self.class.name}")
+    def process(contents, name)
+      preprocess_contents(contents, name) if self.respond_to?(:preprocess_contents)
+      process_contents(contents, name)
     end
 
     def process?(file)

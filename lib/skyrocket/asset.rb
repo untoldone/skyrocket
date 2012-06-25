@@ -15,15 +15,16 @@ module Skyrocket
       @processor.post_process_name(@filename)
     end
 
+    def to_s
+      name
+    end
+
     def output_path
       @output_dir + "/" + @processor.post_process_name(@filename)
     end
 
     def content
-      return @content if @content
-      @content = raw 
-      @content = @processor.process(@content) if @processor
-      return @content
+      return @content ||= @processor.process(raw, name)
     end
 
     def raw

@@ -6,7 +6,7 @@ module Skyrocket
 
     def extension; '.less'; end
 
-    def process(contents)
+    def process_contents(contents, name)
       tree = parser.parse(contents)
       tree.to_css
     end
