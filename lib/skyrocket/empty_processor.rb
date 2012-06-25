@@ -3,7 +3,6 @@ module Skyrocket
     include Processor
 
     def extension; ''; end
-    def process(contents); contents; end;
-
+    def process_contents(contents, name); contents; end;
   end
 end

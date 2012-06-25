@@ -5,7 +5,7 @@ describe Skyrocket::Asset do
   class TestProcessor
     include Skyrocket::Processor
     def post_process_name(h); "blah.html"; end
-    def process(c); "processed!"; end
+    def process_contents(c, n); "processed!"; end
   end
 
   let(:processor) { TestProcessor.new }

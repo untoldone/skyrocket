@@ -3,11 +3,12 @@ require 'coffee-script'
 module Skyrocket
   class CoffeescriptProcessor
     include Processor
+    include DirectiveProcessor
 
     def extension; '.coffee'; end
 
-    def process(contents)
-      CoffeeScript.compile(contents)
+    def process_contents(contents, name)
+      CoffeeScript.compile(body)
     end
   end
 end
