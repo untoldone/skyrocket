@@ -87,7 +87,12 @@ module Skyrocket
       if(path.start_with?("/") || path =~ /^\w+:\/\//)
         path
       else
-        base_url == '/' ? "#{base_url}#{path}" : "#{base_url}/#{path}"
+        if asset_factory.name_exist?(path)
+          on = asset_factory.from_name(path).output_name
+          base_url == '/' ? "#{base_url}#{on}" : "#{base_url}/#{on}"
+        else
+          base_url == '/' ? "#{base_url}#{path}" : "#{base_url}/#{path}"
+        end
       end
     end
 
