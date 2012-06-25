@@ -13,6 +13,7 @@ module Skyrocket
   autoload :DirectiveReader,       "skyrocket/directive_reader"
   autoload :EmptyProcessor,        "skyrocket/empty_processor"
   autoload :ErbProcessor,          "skyrocket/erb_processor"
+  autoload :JavascriptProcessor,   "skyrocket/javascript_processor"
   autoload :LessProcessor,         "skyrocket/less_processor"
   autoload :Processor,             "skyrocket/processor"
   autoload :ProcessorFactory,      "skyrocket/processor_factory"
