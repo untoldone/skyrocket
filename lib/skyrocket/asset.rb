@@ -29,10 +29,16 @@ module Skyrocket
       ppn = @processor.post_process_name(@filename)
       ext = File.extname(ppn)
       "#{ppn.chomp(ext)}_#{digest}#{ext}"
+      "#{ppn.chomp(ext)}#{ext}"
     end
 
     def content
-      return @content ||= @processor.process(raw, name)
+      begin
+        return @content ||= @processor.process(raw, name)
+      rescue Exception => e
+        puts "Error processing: #{name}"
+        raise
+      end
     end
 
     def raw

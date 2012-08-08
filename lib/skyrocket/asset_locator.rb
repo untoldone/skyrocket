@@ -12,7 +12,14 @@ module Skyrocket
       dirs.each do |dir|
         paths += Dir.glob_files(dir + "/**/*")
       end
-      paths.map{ |p| @af.build_asset(p) }
+      paths.map do |p|
+        begin
+          @af.build_asset(p)
+        rescue Exception => e
+          puts "Error parsing: #{p}"
+          raise
+        end
+      end
     end
 
     def missing_asset_paths
