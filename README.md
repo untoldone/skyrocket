@@ -1,4 +1,4 @@
 skyrocket
 ======
 
-Yet another opinionated static content/ web asset generation gem
+Yet another opinionated static content/ web asset generation gem.
